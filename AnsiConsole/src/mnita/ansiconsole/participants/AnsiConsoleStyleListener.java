@@ -27,7 +27,7 @@ import mnita.ansiconsole.utils.AnsiConsoleAttributes;
 import mnita.ansiconsole.utils.AnsiConsoleColorPalette;
 
 public class AnsiConsoleStyleListener implements LineStyleListener, IPositionUpdater {
-    private static final Pattern PATTERN = Pattern.compile(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT);
     private static final Font MONO_FONT = new Font(null, "Monospaced", 6, SWT.NORMAL);
 
     private final DefaultPositionUpdater defaultPositionUpdater = new DefaultPositionUpdater(AnsiPosition.POSITION_NAME);
