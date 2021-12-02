@@ -32,8 +32,10 @@ public class AnsiClipboardUtils {
         Object textData = clipboard.getContents(textTransfer);
         if (textData != null && textData instanceof String) {
             System.out.println("Found TEXT!");
-            String plainText = textData.toString().replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT, "");
-            plainText = plainText .toString().replaceAll("nice", "nice, from Text");
+            String plainText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT
+            		.matcher((String) textData)
+            		.replaceAll("");
+            plainText = plainText.replaceAll("nice", "nice, from Text");
             clipboardData.add(plainText);
             clipboardTransfers.add(textTransfer);
         }
@@ -42,13 +44,15 @@ public class AnsiClipboardUtils {
         Object rtfData = clipboard.getContents(rtfTransfer);
         if (rtfData != null && rtfData instanceof String) {
             System.out.println("Found RTF!");
-            String rtfText = rtfData.toString().replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF, "");
+            String rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
+            		.matcher((String) rtfData)
+            		.replaceAll("");
             // The Win version of MS Word, and Write, understand \chshdng and \chcbpat, but not \cb
             // The MacOS tools seem to understand \cb, but not \chshdng and \chcbpat
             // But using both seems to work fine, both systems just ignore the tags they don't understand.
-            rtfText = rtfText.replaceAll(
-                    AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC,
-                    AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
+            rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC
+            		.matcher(rtfText)
+            		.replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
             rtfText = rtfText.replaceAll("nice", "nice, from RTF");
             clipboardData.add(rtfText);
             clipboardTransfers.add(rtfTransfer);
@@ -58,7 +62,7 @@ public class AnsiClipboardUtils {
         Object htmlData = clipboard.getContents(htmlTransfer);
         if (htmlData != null && htmlData instanceof String) {
             System.out.println("Found HTML!");
-            String htmlText = htmlData.toString().replaceAll("nice", "nice, from HTML");
+            String htmlText = ((String) htmlData).replaceAll("nice", "nice, from HTML");
             clipboardData.add(htmlText);
             clipboardTransfers.add(htmlTransfer);
         } else {
