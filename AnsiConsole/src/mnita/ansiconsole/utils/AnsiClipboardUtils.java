@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.HTMLTransfer;
 import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -56,28 +55,6 @@ public class AnsiClipboardUtils {
             rtfText = rtfText.replaceAll("nice", "nice, from RTF");
             clipboardData.add(rtfText);
             clipboardTransfers.add(rtfTransfer);
-        }
-
-        HTMLTransfer htmlTransfer = HTMLTransfer.getInstance();
-        Object htmlData = clipboard.getContents(htmlTransfer);
-        if (htmlData != null && htmlData instanceof String) {
-            System.out.println("Found HTML!");
-            String htmlText = ((String) htmlData).replaceAll("nice", "nice, from HTML");
-            clipboardData.add(htmlText);
-            clipboardTransfers.add(htmlTransfer);
-        } else {
-            System.out.println("Created HTML!");
-            clipboardData.add("<meta charset=\"utf-8\">"
-                    + "<b style=\"font-weight:normal;\" id=\"docs-internal-guid-77fc1130-7fff-9f5a-ae37-70559b3d25b2\">"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:transparent;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\">This </span>"
-                    + "<span style=\"font-family:monospace;color:#38761d;background-color:transparent;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\">works</span>"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:transparent;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\">, and this </span>"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:#ff0000;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\"> </span>"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:#ffff00;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\">•</span>"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:#0000ff;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\"> </span>"
-                    + "<span style=\"font-family:monospace;color:#000000;background-color:transparent;font-weight:400;font-style:normal;text-decoration:none;white-space:pre;white-space:pre-wrap;\" xml:space=\"preserve\"> is nice, from HTML.</span>"
-                    + "</b>");
-            clipboardTransfers.add(htmlTransfer);
         }
 
         clipboard.setContents(clipboardData.toArray(), clipboardTransfers.toArray(new Transfer[0]));
