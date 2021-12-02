@@ -30,11 +30,9 @@ public class AnsiClipboardUtils {
         TextTransfer textTransfer = TextTransfer.getInstance();
         Object textData = clipboard.getContents(textTransfer);
         if (textData != null && textData instanceof String) {
-            System.out.println("Found TEXT!");
             String plainText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT
             		.matcher((String) textData)
             		.replaceAll("");
-            plainText = plainText.replaceAll("nice", "nice, from Text");
             clipboardData.add(plainText);
             clipboardTransfers.add(textTransfer);
         }
@@ -42,7 +40,6 @@ public class AnsiClipboardUtils {
         RTFTransfer rtfTransfer = RTFTransfer.getInstance();
         Object rtfData = clipboard.getContents(rtfTransfer);
         if (rtfData != null && rtfData instanceof String) {
-            System.out.println("Found RTF!");
             String rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
             		.matcher((String) rtfData)
             		.replaceAll("");
@@ -52,7 +49,6 @@ public class AnsiClipboardUtils {
             rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC
             		.matcher(rtfText)
             		.replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
-            rtfText = rtfText.replaceAll("nice", "nice, from RTF");
             clipboardData.add(rtfText);
             clipboardTransfers.add(rtfTransfer);
         }
