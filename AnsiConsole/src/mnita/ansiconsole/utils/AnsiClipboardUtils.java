@@ -2,10 +2,6 @@ package mnita.ansiconsole.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
@@ -29,7 +25,6 @@ public class AnsiClipboardUtils {
 			return;
 		}
 
-
 		List<Object> clipboardData = new ArrayList<>(2);
 		List<Transfer> clipboardTransfers = new ArrayList<>(2);
 
@@ -48,10 +43,13 @@ public class AnsiClipboardUtils {
 		if (rtfData != null && rtfData instanceof String) {
 			System.out.println("Found RTF!");
 			String rtfText = rtfData.toString().replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF, "");
-		    if (!isWindows()) {
-		    	rtfText = rtfText.replaceAll("\\\\chshdng\\d+\\\\chcbpat", "\\\\cb");
-		    }
-		    rtfText = rtfText.replaceAll("nice", "nice, from RTF");
+			// The Win version of MS Word, and Write, understand \chshdng and \chcbpat, but not \cb
+			// The MacOS tools seem to understand \cb, but not \chshdng and \chcbpat
+			// But using both seems to work fine, both systems just ignore the tags they don't understand.
+			rtfText = rtfText.replaceAll(
+					AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC,
+					AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
+			rtfText = rtfText.replaceAll("nice", "nice, from RTF");
 			clipboardData.add(rtfText);
 			clipboardTransfers.add(rtfTransfer);
 		}
@@ -81,23 +79,5 @@ public class AnsiClipboardUtils {
 		clipboard.setContents(clipboardData.toArray(), clipboardTransfers.toArray(new Transfer[0]));
 
 		clipboard.dispose();
-		dump();
-	}
-
-	static boolean isWindows() {
-		// prop: osgi.os : win32
-	    String os = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-        return os != null && os.contains("win");
-	}
-
-	static void dump() {
-		Properties props = System.getProperties();
-		for (Entry<Object, Object> e : props.entrySet()) {
-			System.out.println("prop: " + e.getKey() + " : " + e.getValue());
-		}
-		Map<String, String> environ = System.getenv();
-		for (Entry<String, String> e : environ.entrySet()) {
-			System.out.println("env : " + e.getKey() + " : " + e.getValue());
-		}
 	}
 }
