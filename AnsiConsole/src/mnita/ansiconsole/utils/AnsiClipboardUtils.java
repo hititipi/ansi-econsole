@@ -11,6 +11,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 
 import mnita.ansiconsole.AnsiConsoleUtils;
+import mnita.ansiconsole.preferences.AnsiConsolePreferenceUtils;
 
 public class AnsiClipboardUtils {
 
@@ -31,26 +32,28 @@ public class AnsiClipboardUtils {
         Object textData = clipboard.getContents(textTransfer);
         if (textData != null && textData instanceof String) {
             String plainText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT
-            		.matcher((String) textData)
-            		.replaceAll("");
+                    .matcher((String) textData)
+                    .replaceAll("");
             clipboardData.add(plainText);
             clipboardTransfers.add(textTransfer);
         }
 
-        RTFTransfer rtfTransfer = RTFTransfer.getInstance();
-        Object rtfData = clipboard.getContents(rtfTransfer);
-        if (rtfData != null && rtfData instanceof String) {
-            String rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
-            		.matcher((String) rtfData)
-            		.replaceAll("");
-            // The Win version of MS Word, and Write, understand \chshdng and \chcbpat, but not \cb
-            // The MacOS tools seem to understand \cb, but not \chshdng and \chcbpat
-            // But using both seems to work fine, both systems just ignore the tags they don't understand.
-            rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC
-            		.matcher(rtfText)
-            		.replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
-            clipboardData.add(rtfText);
-            clipboardTransfers.add(rtfTransfer);
+        if (AnsiConsolePreferenceUtils.putRtfInClipboard()) {
+            RTFTransfer rtfTransfer = RTFTransfer.getInstance();
+            Object rtfData = clipboard.getContents(rtfTransfer);
+            if (rtfData != null && rtfData instanceof String) {
+                String rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
+                        .matcher((String) rtfData)
+                        .replaceAll("");
+                // The Win version of MS Word, and Write, understand \chshdng and \chcbpat, but not \cb
+                // The MacOS tools seem to understand \cb, but not \chshdng and \chcbpat
+                // But using both seems to work fine, both systems just ignore the tags they don't understand.
+                rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_SRC
+                        .matcher(rtfText)
+                        .replaceAll(AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF_FIX_TRG);
+                clipboardData.add(rtfText);
+                clipboardTransfers.add(rtfTransfer);
+            }
         }
 
         clipboard.setContents(clipboardData.toArray(), clipboardTransfers.toArray(new Transfer[0]));
