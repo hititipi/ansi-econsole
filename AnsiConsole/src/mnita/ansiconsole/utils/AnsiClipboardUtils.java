@@ -17,13 +17,9 @@ public class AnsiClipboardUtils {
 
     public static void textToClipboard(StyledText styledText, boolean removeEscapeSeq) {
         Clipboard clipboard = new Clipboard(Display.getDefault());
+
         clipboard.clearContents();
-
-        styledText.copy(); // copy to clipboard using the defaults
-
-        if (!removeEscapeSeq) {
-            return;
-        }
+        styledText.copy(); // copy to clipboard using the default Eclipse behavior
 
         List<Object> clipboardData = new ArrayList<>(2);
         List<Transfer> clipboardTransfers = new ArrayList<>(2);
@@ -31,9 +27,12 @@ public class AnsiClipboardUtils {
         TextTransfer textTransfer = TextTransfer.getInstance();
         Object textData = clipboard.getContents(textTransfer);
         if (textData != null && textData instanceof String) {
-            String plainText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT
-                    .matcher((String) textData)
-                    .replaceAll("");
+            String plainText = (String) textData;
+            if (removeEscapeSeq) {
+                plainText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_TXT
+                        .matcher(plainText)
+                        .replaceAll("");
+            }
             clipboardData.add(plainText);
             clipboardTransfers.add(textTransfer);
         }
@@ -42,9 +41,12 @@ public class AnsiClipboardUtils {
             RTFTransfer rtfTransfer = RTFTransfer.getInstance();
             Object rtfData = clipboard.getContents(rtfTransfer);
             if (rtfData != null && rtfData instanceof String) {
-                String rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
-                        .matcher((String) rtfData)
-                        .replaceAll("");
+                String rtfText = (String) rtfData;
+                if (removeEscapeSeq) {
+                    rtfText = AnsiConsoleUtils.ESCAPE_SEQUENCE_REGEX_RTF
+                            .matcher(rtfText)
+                            .replaceAll("");
+                }
                 // The Win version of MS Word, and Write, understand \chshdng and \chcbpat, but not \cb
                 // The MacOS tools seem to understand \cb, but not \chshdng and \chcbpat
                 // But using both seems to work fine, both systems just ignore the tags they don't understand.
